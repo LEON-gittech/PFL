@@ -16,10 +16,10 @@ class clientDittoCon(Client):
 
         self.mu = args.mu
         self.plocal_steps = args.plocal_steps
-        #这里只是对model_per进行初始化操作，后续不会再初始化model_per
+        #init for model_per
         self.model_per = copy.deepcopy(self.model)
         self.last_local_model = 0
-        #这里只初始化 person 的优化器和 scheduler 是因为 global 的在 base 中已经初始化好了
+        #init for personalized optimizer and scheduler
         self.optimizer_per = torch.optim.SGD(self.model_per.parameters(), lr=self.learning_rate)
         self.learning_rate_scheduler_per = torch.optim.lr_scheduler.ExponentialLR(
             optimizer=self.optimizer_per, 
@@ -55,7 +55,7 @@ class clientDittoCon(Client):
                 _,_,output = self.model(x)
                 loss = self.loss(output, y)
                 
-                #基于样本的对比损失
+                #contrastive loss based on samples 
                 _, out_1, _  = self.model(x1)
                 _, out_2, _ = self.model(x2)
                 # [2*B, D]
@@ -118,7 +118,7 @@ class clientDittoCon(Client):
                 f,p,output = self.model_per(x)
                 
                 loss = 0
-                #基于模型的对比损失
+                #contrastive loss based on models
                 if self.last_local_model !=0:
                     _, pro2, _ = self.model(x)
                     posi = self.cos(p, pro2)#[B]
@@ -137,7 +137,7 @@ class clientDittoCon(Client):
                     moon_loss = self.lam * self.loss(logits, labels)
                     loss += moon_loss
                 
-                #基于样本的对比损失
+                #contrastive loss based on samples 
                 _, out_1, _  = self.model(x1)
                 _, out_2, _ = self.model(x2)
                 # [2*B, D]
@@ -156,8 +156,8 @@ class clientDittoCon(Client):
                 # print("con_loss:",con_loss)
                 loss += con_loss
                 
-                #交叉熵损失
-                loss += self.loss(output, y) #self.loss 是交叉熵损失
+                #CEL
+                loss += self.loss(output, y) 
                 self.optimizer_per.zero_grad()
                 loss.backward()
                 self.optimizer_per.step()
@@ -217,7 +217,7 @@ class clientDittoCon(Client):
                 y = y.to(self.device)
                 x = x[:,2,::]
                 _,_,output = self.model_per(x)
-                loss = self.loss(output, y) #这里就先只显示交叉熵损失
+                loss = self.loss(output, y) 
                 
                 train_num += y.shape[0]
                 losses += loss.item() * y.shape[0]

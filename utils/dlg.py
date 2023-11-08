@@ -6,7 +6,6 @@ import numpy as np
 import math
 
 
-# https://github.com/jackfrued/Python-1/blob/master/analysis/compression_analysis/psnr.py
 def psnr(original, contrast):
     mse = np.mean((original - contrast) ** 2) / 3
     if mse == 0:
@@ -44,15 +43,6 @@ def DLG(net, origin_grad, target_inputs):
                 return grad_diff
             
             optimizer.step(closure)
-
-        # plt.figure(figsize=(3*len(history), 4))
-        # for i in range(len(history)):
-        #     plt.subplot(1, len(history), i + 1)
-        #     plt.imshow(history[i])
-        #     plt.title("iter=%d" % (i * 10))
-        #     plt.axis('off')
-
-        # plt.savefig(f'dlg_{algo}_{cid}_{idx}' + '.pdf', bbox_inches="tight")
 
         history.append(F.sigmoid(dummy_data).data.cpu().numpy())
         
