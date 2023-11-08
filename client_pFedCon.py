@@ -127,11 +127,10 @@ class clientDittoCon(Client):
                     _, pro3, _ = self.last_local_model(x)
                     nega = self.cos(p, pro3)
                     
-                    # moon算是一种二分类任务
                     logits = torch.cat((logits, nega.reshape(-1,1)), dim=1)
 
                     logits /= self.tem
-                    #改一下分子
+
                     labels = torch.zeros(x.size(0)).cuda().long()
 
                     moon_loss = self.lam * self.loss(logits, labels)
