@@ -10,7 +10,7 @@ from sklearn.preprocessing import label_binarize
 from sklearn import metrics
 
 
-class clientDittoCon(Client):
+class clientpFedCon(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
 

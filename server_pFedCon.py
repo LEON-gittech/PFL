@@ -1,18 +1,18 @@
 import copy
 import numpy as np
 import time
-from client_pFedCon import clientDittoCon
+from client_pFedCon import clientpFedCon
 from server_base import Server
 from threading import Thread
 
 
-class DittoCon(Server):
+class pFedCon(Server):
     def __init__(self, args, times):
         super().__init__(args, times)
 
         # select slow clients
         self.set_slow_clients()
-        self.set_clients(clientDittoCon) 
+        self.set_clients(clientpFedCon) 
 
         print(f"\nJoin ratio / total clients: {self.join_ratio} / {self.num_clients}")
         print("Finished creating server and clients.")
@@ -69,7 +69,7 @@ class DittoCon(Server):
 
         if self.num_new_clients > 0:
             self.eval_new_clients = True
-            self.set_new_clients(clientDittoCon)
+            self.set_new_clients(clientpFedCon)
             print(f"\n-------------Fine tuning round-------------")
             print("\nEvaluate new clients")
             self.evaluate()
